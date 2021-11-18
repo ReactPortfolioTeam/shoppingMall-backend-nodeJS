@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-module.exports = Object.freeze({
+module.exports = model = {
   User: {
     userid,
     password,
@@ -45,4 +45,4 @@ module.exports = Object.freeze({
     expire_date,
     refrsh_token,
   },
-});
+};
