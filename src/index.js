@@ -4,12 +4,9 @@ const bodyParser = require('koa-bodyparser');
 const app = new Koa();
 const router = new Router();
 
-router.get('/', (ctx) => {
-  ctx.body = 'testing';
-});
-router.get('/login', (ctx) => {
-  ctx.body = 'testing login';
-});
+const api = require('./api');
+
+router.use('/login', api.routes());
 
 app.use(bodyParser());
 
