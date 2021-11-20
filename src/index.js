@@ -6,7 +6,7 @@ const router = new Router();
 
 const api = require('./api');
 
-router.use('/login', api.routes());
+router.use('/api', api.routes());
 
 app.use(bodyParser());
 

@@ -1,9 +1,9 @@
 {
   "dev": {
-    "host": "localhost",
-    "user": "root",
+    "host": "minishop.c521k5ppjl3c.us-east-1.rds.amazonaws.com",
+    "user": "admin",
     "port": 3306,
-    "password": "root",
+    "password": "whgusdlf1!",
     "database": "minishop"
   }
 }
