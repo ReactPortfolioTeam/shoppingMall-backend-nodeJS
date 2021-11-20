@@ -1,9 +1,13 @@
 const Router = require('koa-router');
 const login = require('./login');
+
 const signup = require('./signup');
+const logout = require('./logout');
+
 const api = new Router();
 
 api.use('/login', login.routes());
+api.use('/logout', logout.routes());
 
 api.use('/signup', signup.routes());
 
