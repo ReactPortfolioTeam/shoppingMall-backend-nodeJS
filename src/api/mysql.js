@@ -22,12 +22,4 @@ const pool = mysql.createPool({
 
 // connection.connect(); // 연결
 
-async function getConnection(callback) {
-  await pool.getConnection(function (err, conn) {
-    if (!err) {
-      callback(conn);
-    }
-  });
-}
-
-module.exports = getConnection;
+module.exports = pool;

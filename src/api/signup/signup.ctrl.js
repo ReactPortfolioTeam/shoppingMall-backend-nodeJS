@@ -4,10 +4,11 @@ const emptyError = require('../../util/emptyError');
 const getModel = require('../../util/getModel');
 const objectChangeArray = require('../../util/objectChangeArray');
 const { insertQuery, findById } = require('../../util/sql');
+const pool = require('../mysql');
 const getConnection = require('../mysql');
 
-exports.signup = (ctx) => {
-  // connection.connection();
+exports.signup = async (ctx) => {
+  let data;
 
   const user = getModel(User, ctx);
   user.join_date = new Date();
@@ -20,60 +21,33 @@ exports.signup = (ctx) => {
 
   if (errorMessage.length > 0) {
     ctx.status = 400;
-
     ctx.body = {
       msg: errorMessage,
     };
     return;
   }
-
-  getConnection((conn) => {
-    conn.execute(sql, (error, results, fields) => {
-      if (error) {
-        console.log(error);
-        ctx.status = 400;
-        ctx.body = {
-          msg: '중복된 아이디 입니다.',
-        };
-      } else if (results) {
-        console.log(results);
-        console.log(fields);
-        ctx.status = 201;
-        ctx.body = {
-          msg: `${user.userid}님 환영합니다.`,
-        };
-      }
-    });
-    // .then((res) => {
-    //   ctx.status = 201;
-    //   ctx.body = {
-    //     msg: `${user.userid}님 환영합니다.`,
-    //   };
-    //   return true;
-    // })
-    // .catch((err) => {
-    //   ctx.status = 400;
-    //   ctx.body = {
-    //     msg: '중복된 아이디 입니다.',
-    //   };
-    //   return false;
-    // });
-    // if (result) {
-    //   console.log('here');
-    //   ctx.status = 201;
-    //   ctx.body = {
-    //     msg: `${user.userid}님 환영합니다.`,
-    //   };
-    // } else {
-    //   console.log('here1');
-    //   ctx.status = 400;
-    //   ctx.body = {
-    //     msg: '중복된 아이디 입니다.',
-    //   };
-    // }
-    conn.release(); //
-  });
-  console.log(ctx.response);
+  try {
+    data = await pool.execute(sql);
+  } catch (error) {
+    if (error.toString().includes('Duplicate')) {
+      ctx.status = 400;
+      ctx.body = {
+        msg: `중복된 아이디 입니다.`,
+      };
+      return;
+    }
+  }
+  if (data !== undefined && data[0]) {
+    ctx.status = 201;
+    ctx.body = {
+      msg: `${user.userid}님 환영합니다.`,
+    };
+  } else {
+    ctx.status = 400;
+    ctx.body = {
+      msg: `에러 발생`,
+    };
+  }
 };
 
 exports.check = async (ctx) => {
@@ -87,25 +61,29 @@ exports.check = async (ctx) => {
   const sql = findById(userId, 'user');
   let errorMessage = [];
   emptyError(userId, errorMessage);
-  console.log(sql);
+
   if (errorMessage.length > 0) {
     ctx.status = 400;
-
     ctx.body = {
       msg: errorMessage,
     };
-  } else {
-    const result = await getConnection((err, conn) => {
-      conn
-        .promise()
-        .query(sql)
-        .then((res) => console.log(res))
-        .catch((err) => console.log(err));
-      console.log('here3');
-      conn.release(); //
-    });
-    console.log('here4');
-    console.log(result, 'result');
+    return;
   }
-  await console.log(ctx.response, 'signup 실행');
+  let data;
+  try {
+    data = await pool.execute(sql);
+  } catch (error) {
+    console.log(error);
+  }
+  if (data !== undefined && data[0][0]) {
+    ctx.status = 400;
+    ctx.body = {
+      msg: '중복된 아이디 입니다.',
+    };
+  } else {
+    ctx.status = 200;
+    ctx.body = {
+      msg: '사용가능한 아이디입니다.',
+    };
+  }
 };
