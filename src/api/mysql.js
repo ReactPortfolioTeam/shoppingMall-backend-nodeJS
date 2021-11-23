@@ -1,4 +1,4 @@
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise');
 const config = require('../../config/config.json');
 
 // const connection = mysql.createConnection({
@@ -22,8 +22,8 @@ const pool = mysql.createPool({
 
 // connection.connect(); // 연결
 
-function getConnection(callback) {
-  pool.getConnection(function (err, conn) {
+async function getConnection(callback) {
+  await pool.getConnection(function (err, conn) {
     if (!err) {
       callback(conn);
     }
