@@ -1,6 +1,8 @@
-// const Model = require('../../../model/Model');
-
 exports.logout = (ctx) => {
-  // ctx.request.session.loggedin = false;
-  ctx.body = `GET ${ctx.request.path} 로그아웃되었습니다.`;
+  ctx.session.loggedin = false;
+  ctx.body = {
+    userState: ctx.session.loggedin,
+    message: '로그아웃 되었습니다.',
+  };
+  console.log('ctx.session.loggedin: ' + ctx.session.loggedin);
 };

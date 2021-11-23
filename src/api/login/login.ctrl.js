@@ -1,4 +1,3 @@
-const getConnection = require('../mysql');
 const config = require('../../../config/config.json');
 const pool = require('mysql2/promise').createPool({
   host: config.dev.host,
@@ -18,12 +17,13 @@ exports.login = async (ctx) => {
   let data;
   try {
     data = await pool.query(sql, [userid, password]);
-    ctx.status = 202;
   } catch (error) {
     console.log(error);
   }
   if (userid && password) {
     if (data[0][0]) {
+      ctx.status = 202;
+      ctx.session.loggedin = true;
       ctx.body = {
         data: data[0][0],
         message: '로그인에 성공하였습니다.',
@@ -43,4 +43,5 @@ exports.login = async (ctx) => {
       status: ctx.status,
     };
   }
+  console.log('ctx.session.loggedin: ' + ctx.session.loggedin);
 };
