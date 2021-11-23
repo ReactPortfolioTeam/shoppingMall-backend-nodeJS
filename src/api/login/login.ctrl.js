@@ -12,8 +12,6 @@ const pool = require('mysql2/promise').createPool({
 
 const sql = 'SELECT * FROM user WHERE userid = ? AND password = ?';
 
-const session = require('../../index');
-
 exports.login = async (ctx) => {
   const { userid, password } = ctx.request.body;
   let data;
