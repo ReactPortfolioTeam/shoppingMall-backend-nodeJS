@@ -27,6 +27,7 @@ exports.login = async (ctx) => {
       ctx.body = {
         data: data[0][0],
         message: '로그인에 성공하였습니다.',
+        userState: ctx.session.loggedin,
         status: ctx.status,
       };
     } else {
