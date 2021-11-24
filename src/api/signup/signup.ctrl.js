@@ -11,7 +11,7 @@ exports.signup = async (ctx) => {
   let data;
 
   const user = getModel(User, ctx);
-  user.join_date = new Date();
+  user.join_date = 'Now()';
   user.level = 'member';
 
   let errorMessage = [];
