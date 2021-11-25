@@ -22,7 +22,7 @@ exports.login = async (ctx) => {
   }
   if (userid && password) {
     if (data[0][0]) {
-      ctx.status = 202;
+      ctx.status = 200;
       ctx.session.loggedin = true;
       ctx.body = {
         data: data[0][0],
@@ -31,14 +31,14 @@ exports.login = async (ctx) => {
         status: ctx.status,
       };
     } else {
-      ctx.status = 404;
+      ctx.status = 400;
       ctx.body = {
         message: '로그인 정보가 일치하지 않습니다.',
         status: ctx.status,
       };
     }
   } else {
-    ctx.status = 404;
+    ctx.status = 400;
     ctx.body = {
       message: '아이디와 비밀번호를 입력해주세요',
       status: ctx.status,

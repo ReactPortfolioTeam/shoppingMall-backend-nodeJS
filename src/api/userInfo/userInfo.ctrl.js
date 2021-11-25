@@ -41,19 +41,23 @@ exports.updatePassword = async (ctx) => {
       status: ctx.status,
     };
   } else {
-    ctx.throw(404, ctx.status + ' : ' + '패스워드가 일치하지 않습니다');
+    ctx.throw(400, ctx.status + ' : ' + '패스워드가 일치하지 않습니다');
   }
 };
 
 exports.updateAddress = async (ctx) => {
   const { userid, nextAddress } = ctx.request.body;
-  await pool.query('UPDATE user SET address = ? WHERE userid = ? ', [
-    nextAddress,
-    userid,
-  ]);
-  ctx.status = 200;
-  ctx.body = {
-    message: '주소가 변경되었습니다.',
-    status: ctx.status,
-  };
+  if (nextAddress) {
+    await pool.query('UPDATE user SET address = ? WHERE userid = ? ', [
+      nextAddress,
+      userid,
+    ]);
+    ctx.status = 200;
+    ctx.body = {
+      message: '주소가 변경되었습니다.',
+      status: ctx.status,
+    };
+  } else {
+    ctx.throw(400, '변경할 주소를 입력해주세요.');
+  }
 };
