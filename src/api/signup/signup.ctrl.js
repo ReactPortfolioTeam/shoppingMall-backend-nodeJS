@@ -17,8 +17,9 @@ exports.signup = async (ctx) => {
   let errorMessage = [];
 
   const sql = insertQuery(user, 'user');
-  emptyError(user, errorMessage);
 
+  emptyError.emptyAndRegError(user, errorMessage);
+  console.log(errorMessage);
   if (errorMessage.length > 0) {
     ctx.status = 400;
     ctx.body = {
@@ -26,6 +27,7 @@ exports.signup = async (ctx) => {
     };
     return;
   }
+
   try {
     data = await pool.execute(sql);
   } catch (error) {
