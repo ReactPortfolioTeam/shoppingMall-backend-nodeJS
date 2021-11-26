@@ -83,17 +83,13 @@ exports.updateAddress = async (ctx) => {
     };
     return;
   }
-  if (user.address) {
-    await pool.query('UPDATE user SET address = ? WHERE userid = ? ', [
-      user.address,
-      user.userid,
-    ]);
-    ctx.status = 200;
-    ctx.body = {
-      message: '주소가 변경되었습니다.',
-      status: ctx.status,
-    };
-  } else {
-    ctx.throw(400, '변경할 주소를 입력해주세요.');
-  }
+  await pool.query('UPDATE user SET address = ? WHERE userid = ? ', [
+    user.address,
+    user.userid,
+  ]);
+  ctx.status = 200;
+  ctx.body = {
+    message: '주소가 변경되었습니다.',
+    status: ctx.status,
+  };
 };
