@@ -27,6 +27,8 @@ module.exports.emptyAndRegError = (Model, errorMessageArray) => {
       reg.RegEmailCheck(Model[key], errorMessageArray);
     } else if (key === 'tel') {
       reg.RegTelCheck(Model[key], errorMessageArray);
+    } else if (key === 'address') {
+      reg.RegAddressCheck(Model[key], errorMessageArray);
     }
     if (
       Model[key] === '' ||

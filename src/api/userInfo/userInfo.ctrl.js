@@ -1,14 +1,8 @@
-const config = require('../../../config/config.json');
-const pool = require('mysql2/promise').createPool({
-  host: config.dev.host,
-  user: config.dev.user,
-  port: config.dev.port,
-  password: config.dev.password,
-  database: config.dev.database,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-});
+const { User } = require('../../../model/Model');
+const emptyError = require('../../util/emptyError');
+const getModel = require('../../util/getModel');
+const { findById } = require('../../util/sql');
+const pool = require('../mysql');
 
 exports.getUserInfo = async (ctx) => {
   const { userid } = ctx.request.body;
@@ -23,17 +17,42 @@ exports.getUserInfo = async (ctx) => {
 };
 
 exports.updatePassword = async (ctx) => {
-  const { userid, prevPassword, nextPassword } = ctx.request.body;
+  //   const { userid, prevPassword, nextPassword } = ctx.request.body;
+  const user = getModel(
+    {
+      userid: '',
+      prevPassword: '',
+      password: '',
+    },
+    ctx,
+  );
+  let errorMessage = [];
   let data;
+  const userId = getModel(
+    {
+      userid: '',
+    },
+    ctx,
+  );
+  const sql = findById(userId, 'user');
+  emptyError.emptyAndRegError(user, errorMessage);
+  console.log(errorMessage);
+  if (errorMessage.length > 0) {
+    ctx.status = 400;
+    ctx.body = {
+      msg: errorMessage,
+    };
+    return;
+  }
   try {
-    data = await pool.query('SELECT * FROM user WHERE userid = ?', [userid]);
+    data = await pool.execute(sql);
   } catch (error) {
     console.log(error);
   }
-  if (data[0][0].password === prevPassword) {
+  if (data[0][0].password === user.prevPassword) {
     await pool.query('UPDATE user SET password = ? WHERE userid = ? ', [
-      nextPassword,
-      userid,
+      user.password,
+      user.userid,
     ]);
     ctx.status = 200;
     ctx.body = {
@@ -46,11 +65,28 @@ exports.updatePassword = async (ctx) => {
 };
 
 exports.updateAddress = async (ctx) => {
-  const { userid, nextAddress } = ctx.request.body;
-  if (nextAddress) {
+  //   const { userid, address } = ctx.request.body;
+  const user = getModel(
+    {
+      userid: '',
+      address: '',
+    },
+    ctx,
+  );
+  const errorMessage = [];
+  emptyError.emptyAndRegError(user, errorMessage);
+  console.log(errorMessage);
+  if (errorMessage.length > 0) {
+    ctx.status = 400;
+    ctx.body = {
+      msg: errorMessage,
+    };
+    return;
+  }
+  if (user.address) {
     await pool.query('UPDATE user SET address = ? WHERE userid = ? ', [
-      nextAddress,
-      userid,
+      user.address,
+      user.userid,
     ]);
     ctx.status = 200;
     ctx.body = {

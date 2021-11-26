@@ -1,14 +1,4 @@
-const config = require('../../../config/config.json');
-const pool = require('mysql2/promise').createPool({
-  host: config.dev.host,
-  user: config.dev.user,
-  port: config.dev.port,
-  password: config.dev.password,
-  database: config.dev.database,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-});
+const pool = require('../mysql');
 
 const sql = 'SELECT * FROM user WHERE userid = ? AND password = ?';
 
