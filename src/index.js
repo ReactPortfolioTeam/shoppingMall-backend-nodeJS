@@ -1,5 +1,6 @@
 const Koa = require('koa');
 const Router = require('koa-router');
+const cors = require('cors');
 const bodyParser = require('koa-bodyparser');
 const app = new Koa();
 const router = new Router();
@@ -23,6 +24,11 @@ app.keys = ['secretKey'];
 router.use('/api', api.routes());
 
 app.use(bodyParser()).use(this.session);
+
+app.use(cors());
+
+//  By.Juhan app.use(cors())  cors 에러 허용 지금 방식은 전체허용이기에 좋지 않음
+//  app.use(cors({origin:'허용할 주소'}))
 
 app.use(router.routes()).use(router.allowedMethods());
 
