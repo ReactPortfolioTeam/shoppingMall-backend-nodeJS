@@ -5,10 +5,11 @@ const { findById } = require('../../util/sql');
 const pool = require('../mysql');
 
 exports.getUserInfo = async (ctx) => {
-  const { userid } = ctx.request.body;
+  const { userid } = ctx.params;
   let data;
   try {
     data = await pool.query('SELECT * FROM user WHERE userid = ?', [userid]);
+    ctx.status = 200;
   } catch (error) {
     console.log(error);
   }
