@@ -1,9 +1,29 @@
+const { emptyAndRegError, emptyError } = require('../../util/emptyError');
 const pool = require('../mysql');
 
 const sql = 'SELECT * FROM user WHERE userid = ? AND password = ?';
 
 exports.login = async (ctx) => {
+  const loginModel = {
+    userid: '',
+    password: '',
+  };
   const { userid, password } = ctx.request.body;
+  loginModel.userid = userid;
+  loginModel.password = password;
+
+  let errorMessage = [];
+
+  emptyError(loginModel, errorMessage);
+
+  if (errorMessage.length > 0) {
+    console.log(errorMessage);
+    ctx.status = 400;
+    ctx.body = {
+      msg: errorMessage,
+    };
+    return;
+  }
   let data;
   try {
     data = await pool.query(sql, [userid, password]);
@@ -23,16 +43,9 @@ exports.login = async (ctx) => {
     } else {
       ctx.status = 400;
       ctx.body = {
-        message: '로그인 정보가 일치하지 않습니다.',
-        status: ctx.status,
+        msg: [{ type: 'password', msg: '로그인 정보가 일치하지 않습니다.' }],
       };
     }
-  } else {
-    ctx.status = 400;
-    ctx.body = {
-      message: '아이디와 비밀번호를 입력해주세요',
-      status: ctx.status,
-    };
   }
   console.log('ctx.session.loggedin: ' + ctx.session.loggedin);
 };
