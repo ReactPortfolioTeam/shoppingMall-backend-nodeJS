@@ -41,6 +41,7 @@ exports.updatePassword = async (ctx) => {
   if (errorMessage.length > 0) {
     ctx.status = 400;
     ctx.body = {
+      status: ctx.status,
       msg: errorMessage,
     };
     return;
@@ -57,11 +58,15 @@ exports.updatePassword = async (ctx) => {
     ]);
     ctx.status = 200;
     ctx.body = {
-      message: '비밀번호가 변경되었습니다.',
       status: ctx.status,
+      msg: '비밀번호가 변경되었습니다.',
     };
   } else {
-    ctx.throw(400, ctx.status + ' : ' + '패스워드가 일치하지 않습니다');
+    ctx.status = 401;
+    ctx.body = {
+      status: ctx.status,
+      msg: '비밀번호가 일치하지 않습니다.',
+    };
   }
 };
 
@@ -80,6 +85,7 @@ exports.updateAddress = async (ctx) => {
   if (errorMessage.length > 0) {
     ctx.status = 400;
     ctx.body = {
+      status: ctx.status,
       msg: errorMessage,
     };
     return;
@@ -90,7 +96,7 @@ exports.updateAddress = async (ctx) => {
   ]);
   ctx.status = 200;
   ctx.body = {
-    message: '주소가 변경되었습니다.',
     status: ctx.status,
+    msg: '주소가 변경되었습니다.',
   };
 };
