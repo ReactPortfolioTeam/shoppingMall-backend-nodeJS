@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 const { User } = require('../../../model/Model');
-const emptyError = require('../../util/emptyError');
+const { RegUserIdCheck } = require('../../reg/signup');
+const { emptyError, emptyAndRegError } = require('../../util/emptyError');
 const getModel = require('../../util/getModel');
 const objectChangeArray = require('../../util/objectChangeArray');
 const { insertQuery, findById } = require('../../util/sql');
@@ -18,7 +19,7 @@ exports.signup = async (ctx) => {
 
   const sql = insertQuery(user, 'user');
 
-  emptyError.emptyAndRegError(user, errorMessage);
+  emptyAndRegError(user, errorMessage);
   console.log(errorMessage);
   if (errorMessage.length > 0) {
     ctx.status = 400;
@@ -53,17 +54,14 @@ exports.signup = async (ctx) => {
 };
 
 exports.check = async (ctx) => {
-  // connection.connection();
-  const userId = getModel(
-    {
-      userid: '',
-    },
-    ctx,
-  );
+  console.log(ctx.params.userid, 'check');
+  const userId = {
+    userid: ctx.params.userid,
+  };
   const sql = findById(userId, 'user');
   let errorMessage = [];
   emptyError(userId, errorMessage);
-
+  RegUserIdCheck(userId.userid, errorMessage);
   if (errorMessage.length > 0) {
     ctx.status = 400;
     ctx.body = {
@@ -80,7 +78,12 @@ exports.check = async (ctx) => {
   if (data !== undefined && data[0][0]) {
     ctx.status = 400;
     ctx.body = {
-      msg: '중복된 아이디 입니다.',
+      msg: [
+        {
+          type: 'userid',
+          msg: '중복된 아이디 입니다.',
+        },
+      ],
     };
   } else {
     ctx.status = 200;
