@@ -10,19 +10,21 @@ exports.order = async (ctx) => {
       email: '',
       tel: '',
       address: '',
+      detailedAddress: '',
+      shippingPrice: 0,
       products: [],
     },
     ctx,
   );
-  let errorMessage = [];
-  emptyError(apiModel, errorMessage);
+  // let errorMessage = [];
+  // emptyError(apiModel, errorMessage);
 
-  if (errorMessage.length > 0) {
-    ctx.status = 400;
-    ctx.body = {
-      msg: errorMessage,
-    };
-  }
+  // if (errorMessage.length > 0) {
+  //   ctx.status = 400;
+  //   ctx.body = {
+  //     msg: errorMessage,
+  //   };
+  // }
 
   const userId = getModel(
     {
@@ -45,12 +47,13 @@ exports.order = async (ctx) => {
     const OrderInfo = {
       userid: apiModel.userid,
       phone_number: apiModel.tel,
-      shipment_address: apiModel.address,
+      shipment_address: apiModel.address + ' ' + apiModel.detailedAddress,
       order_state: 'pending',
     };
     const sqlInsertOrderInfo = insertQuery(OrderInfo, 'order_info');
     try {
       insertData = await pool.execute(sqlInsertOrderInfo);
+      console.log(insertData);
     } catch (error) {
       console.log(error);
       ctx.status = 400;
@@ -61,7 +64,7 @@ exports.order = async (ctx) => {
     if (insertData[0].insertId !== undefined) {
       for (const product of apiModel.products) {
         const orderProduct = {
-          product_id: product.productId,
+          product_id: product.product_id,
           order_id: insertData[0].insertId,
           quantity: product.quantity,
         };
