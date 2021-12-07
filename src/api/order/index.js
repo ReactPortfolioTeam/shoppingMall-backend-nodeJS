@@ -3,6 +3,6 @@ const order = new Router();
 const orderCtrl = require('./order.ctrl');
 
 order.post('/', orderCtrl.order);
-order.get('/:userid/:orderId', orderCtrl.orderConfirm);
+order.get('/:userid/:orderid', orderCtrl.orderConfirm);
 
 module.exports = order;

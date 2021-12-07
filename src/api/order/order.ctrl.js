@@ -11,7 +11,7 @@ exports.order = async (ctx) => {
       tel: '',
       address: '',
       detailedAddress: '',
-      shippingPrice: 0,
+      orderPrice: 0,
       products: [],
     },
     ctx,
@@ -49,6 +49,7 @@ exports.order = async (ctx) => {
       phone_number: apiModel.tel,
       shipment_address: apiModel.address + ' ' + apiModel.detailedAddress,
       order_state: 'pending',
+      order_price: apiModel.orderPrice,
     };
     const sqlInsertOrderInfo = insertQuery(OrderInfo, 'order_info');
     try {
@@ -85,6 +86,7 @@ exports.order = async (ctx) => {
       ctx.status = 200;
       ctx.body = {
         msg: '주문에 성공하였습니다.',
+        orderId: insertData[0].insertId,
       };
     }
   } else {
@@ -98,28 +100,33 @@ exports.order = async (ctx) => {
 exports.orderConfirm = async (ctx) => {
   const orderConfirmModel = {
     userid: ctx.params.userid,
-    order_id: ctx.params.orderId,
+    order_id: ctx.params.orderid,
   };
 
-  const sql = findById(orderConfirmModel, 'order_info');
-  let data;
-  console.log(sql);
+  const sql_orderInfo = findById(orderConfirmModel, 'order_info');
+  let data_orderInfo;
 
+  const sql_orderProduct = findById(
+    { order_id: orderConfirmModel.order_id },
+    'order_product',
+  );
+  let data_orderProduct;
   try {
-    data = await pool.execute(sql);
+    data_orderInfo = await pool.execute(sql_orderInfo);
+    data_orderProduct = await pool.execute(sql_orderProduct);
   } catch (error) {
-    //   error.toString().inclueds("")
     ctx.status = 400;
     ctx.body = {
       msg: error.sqlMessage,
     };
     return;
   }
-  if (data[0] !== undefined && data[0].length > 0) {
-    console.log(data[0][0]);
+  if (data_orderInfo[0] !== undefined && data_orderInfo[0].length > 0) {
+    // console.log(data_orderInfo[0][0]);
     ctx.status = 200;
     ctx.body = {
-      orderInfo: data[0][0],
+      orderInfo: data_orderInfo[0][0],
+      orderProduct: data_orderProduct[0],
     };
   } else {
     //찾을수 없는 경우 상태코드 확인
