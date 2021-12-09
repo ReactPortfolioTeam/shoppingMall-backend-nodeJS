@@ -10,7 +10,16 @@ const getConnection = require('../mysql');
 
 exports.signup = async (ctx) => {
   let data;
-
+  const User = {
+    userid: '',
+    password: '',
+    email: '',
+    name: '',
+    address: '',
+    join_date: '',
+    level: '',
+    confirmPw: '',
+  };
   const user = getModel(User, ctx);
   user.join_date = 'Now()';
   user.level = 'member';
@@ -20,6 +29,13 @@ exports.signup = async (ctx) => {
   const sql = insertQuery(user, 'user');
 
   emptyAndRegError(user, errorMessage);
+  if (user.password !== user.confirmPw) {
+    errorMessage.push({
+      type: 'confirmPw',
+      msg: '비밀번호,비밀번호 확인이 같지 않습니다.',
+    });
+  }
+
   console.log(errorMessage);
   if (errorMessage.length > 0) {
     ctx.status = 400;

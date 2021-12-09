@@ -21,15 +21,16 @@ module.exports.RegUserIdCheck = (userId, errorMessageArray) => {
     return false;
   }
 };
-module.exports.RegPasswordCheck = (password, errorMessageArray) => {
+module.exports.RegPasswordCheck = (password, errorMessageArray, isConfirm) => {
   const regdex = new RegExp(RegOnlyEngAndNum);
+  const string = isConfirm ? 'confirmPw' : 'password';
   if (regdex.test(password) && password.length >= 6 && password.length <= 15) {
     return true;
   } else {
     if (errorMessageArray)
       errorMessageArray.push({
-        type: 'password',
-        msg: 'password 값이 올바르지 않습니다.',
+        type: string,
+        msg: `${string} 값이 올바르지 않습니다.`,
       });
     return false;
   }

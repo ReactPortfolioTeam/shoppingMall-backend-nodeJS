@@ -21,8 +21,8 @@ module.exports.emptyAndRegError = (Model, errorMessageArray) => {
   for (const key in Model) {
     if (key === 'userid') {
       reg.RegUserIdCheck(Model[key], errorMessageArray);
-    } else if (key === 'password') {
-      reg.RegPasswordCheck(Model[key], errorMessageArray);
+    } else if (key === 'password' || key === 'confirmPw') {
+      reg.RegPasswordCheck(Model[key], errorMessageArray, key === 'confirmPw');
     } else if (key === 'email') {
       reg.RegEmailCheck(Model[key], errorMessageArray);
     } else if (key === 'tel') {
