@@ -32,6 +32,6 @@ app.use(cors());
 
 app.use(router.routes()).use(router.allowedMethods());
 
-app.listen(8080, () => {
-  console.log('Listening to port 8080');
+app.listen(process.env.PORT || 80, () => {
+  console.log(`Listening to port ${process.env.PORT || '80'}`);
 });
